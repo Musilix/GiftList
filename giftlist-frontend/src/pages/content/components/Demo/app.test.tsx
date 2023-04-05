@@ -1,10 +1,10 @@
-import { render, screen } from "@testing-library/react";
 import App from "@pages/content/components/Demo/app";
+import { render, screen } from "@testing-library/react";
 
 describe("appTest", () => {
   test("render text", () => {
     // given
-    const text = "content view";
+    const text = "Append this perhaps?";
 
     // when
     render(<App />);
