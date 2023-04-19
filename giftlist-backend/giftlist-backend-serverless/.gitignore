@@ -5,9 +5,15 @@
 /dist
 dist
 
+# env vars
+.env
+.env.local
+.env.stage
+
+# stale files
 instructions.md
 stale-template.yaml
-
 src/handlers/preview/
 
+# aws sam build files
 .aws-sam/
