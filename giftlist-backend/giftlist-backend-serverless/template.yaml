@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  giftlist-backend-serverless
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Resources:
+  helloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: /handlers/helloworld.helloWorldHandler
+      Runtime: nodejs18.x
+      MemorySize: 128
+      Timeout: 100
+      Description: A basic handler that just returns what you sent it
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /helloworld
+            Method: POST

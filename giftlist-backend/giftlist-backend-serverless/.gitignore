@@ -1,0 +1,13 @@
+# dependencies
+/node_modules
+
+# build
+/dist
+dist
+
+instructions.md
+stale-template.yaml
+
+src/handlers/preview/
+
+.aws-sam/
