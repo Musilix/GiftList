@@ -1,9 +1,10 @@
 import { APIGatewayEvent } from "aws-lambda";
 
-export const helloWorldHandler = async (event: APIGatewayEvent) => {
+export const helloworld = async (event: APIGatewayEvent) => {
   const body = event.body ? JSON.parse(event.body) : {};
 
   if (body.message) {
+    console.log("we;re in");
     const response = {
       statusCode: 200,
       headers: {

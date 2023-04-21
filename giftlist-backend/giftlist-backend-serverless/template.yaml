@@ -4,16 +4,24 @@ Description: >-
 
 Transform:
   - AWS::Serverless-2016-10-31
+Globals:
+  Function:
+    Layers:
+      - !Ref RuntimeDependenciesLayer
+    Runtime: nodejs18.x
+    MemorySize: 128
+    Timeout: 100
 
 Resources:
   helloWorldFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
     Properties:
-      CodeUri: dist/
-      Handler: /handlers/helloworld.helloWorldHandler
-      Runtime: nodejs18.x
-      MemorySize: 128
-      Timeout: 100
+      # Holy dear christ almighty, this took the longest time to resolve, but after setting up my makefile to automagically transpile TS to JS,
+      # I had to set this handler up properly to point to that transpiled JS. SAM did some more magic and resolved the path for this functions build artifact,
+      # but I HAD TO SPECIFY THE PATH TO THE HANDLER IN THE BUILD ARTIFACT. I was pointing to the absolute path .aws-sam/build/<FunctionName>/dist/...
+      Handler: ./dist/handlers/helloworld.helloworld
       Description: A basic handler that just returns what you sent it
       Events:
         Api:
@@ -21,6 +29,45 @@ Resources:
           Properties:
             Path: /helloworld
             Method: POST
+
+    # No need for this when using Makefile
+    # Metadata:
+    #   BuildMethod: esbuild
+    #   BuildProperties:
+    #     Format: cjs
+    #     Minify: true
+    #     # OutExtension:
+    #     #   - .js=.mjs
+    #     Target: "es2020"
+    #     Sourcemap: true
+    #     Outdir:
+    #     EntryPoints:
+    #       - ./src/handlers/helloworld.ts
+
+  testLoginFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: ./dist/handlers/testlogin.testLoginHandler
+      Description: A route that will verify if the _sess cookie contains a valid sessionId for a user in our Clerk user management system
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /testlogin
+            Method: GET
+
+  RuntimeDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Description: Runtime dependencies for Lambdas
+      ContentUri: ./
+      CompatibleRuntimes:
+        - nodejs18.x
+      RetentionPolicy: Retain
 
 Outputs:
   WebEndpoint:
